@@ -29,9 +29,9 @@ jobs:
 
     - name: Create Clean Gradle Settings
       run: |
-        echo "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }" > settings.gradle
-        echo "include ':app'" >> settings.gradle
-        echo "dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS) repositories { google(); mavenCentral() } }" >> settings.gradle
+        printf "pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\n" > settings.gradle
+        printf "include ':app'\n" >> settings.gradle
+        printf "dependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n" >> settings.gradle
         echo "" > build.gradle
 
         mkdir -p gradle/wrapper
