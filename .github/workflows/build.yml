@@ -37,8 +37,8 @@ jobs:
         printf "include ':app'\n" >> settings.gradle
         printf "dependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n" >> settings.gradle
         
-        # Root build.gradle with android gradle plugin
-        printf "buildscript {\n    repositories {\n        google()\n        mavenCentral()\n    }\n    dependencies {\n        classpath 'com.android.tools.build:gradle:7.4.2'\n    }\n}\nallprojects {\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n" > build.gradle
+        # Keep root build.gradle completely empty to avoid repository conflicts
+        echo "" > build.gradle
 
         mkdir -p gradle/wrapper
         echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
