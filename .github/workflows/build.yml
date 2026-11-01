@@ -14,7 +14,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '17'
@@ -25,14 +25,20 @@ jobs:
         if [ -f "MainActivity.java" ]; then mv MainActivity.java app/src/main/java/com/poojamobiles/cutter/; fi
         if [ -f "activity_main.xml" ]; then mv activity_main.xml app/src/main/res/layout/; fi
         if [ -f "AndroidManifest.xml" ]; then mv AndroidManifest.xml app/src/main/; fi
-        if [ -f "build.gradle" ] && [ ! -f "app/build.gradle" ]; then cp build.gradle app/; fi
+
+        # Create standard app level build.gradle if missing
+        if [ ! -f "app/build.gradle" ]; then
+          printf "plugins {\n    id 'com.android.application'\n}\n\nandroid {\n    compileSdk 33\n    defaultConfig {\n        applicationId 'com.poojamobiles.cutter'\n        minSdk 21\n        targetSdk 33\n        versionCode 1\n        versionName '1.0'\n    }\n}\n\ndependencies {\n    implementation 'androidx.appcompat:appcompat:1.6.1'\n}\n" > app/build.gradle
+        fi
 
     - name: Create Clean Gradle Settings
       run: |
         printf "pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\n" > settings.gradle
         printf "include ':app'\n" >> settings.gradle
         printf "dependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n" >> settings.gradle
-        echo "" > build.gradle
+        
+        # Root build.gradle with android gradle plugin
+        printf "buildscript {\n    repositories {\n        google()\n        mavenCentral()\n    }\n    dependencies {\n        classpath 'com.android.tools.build:gradle:7.4.2'\n    }\n}\nallprojects {\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n" > build.gradle
 
         mkdir -p gradle/wrapper
         echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
