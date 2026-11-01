@@ -26,7 +26,7 @@ jobs:
         if [ -f "activity_main.xml" ]; then mv activity_main.xml app/src/main/res/layout/; fi
         if [ -f "AndroidManifest.xml" ]; then mv AndroidManifest.xml app/src/main/; fi
 
-        # Create standard app level build.gradle if missing
+        # Create app level build.gradle without conflicting repositories block
         if [ ! -f "app/build.gradle" ]; then
           printf "plugins {\n    id 'com.android.application'\n}\n\nandroid {\n    compileSdk 33\n    defaultConfig {\n        applicationId 'com.poojamobiles.cutter'\n        minSdk 21\n        targetSdk 33\n        versionCode 1\n        versionName '1.0'\n    }\n}\n\ndependencies {\n    implementation 'androidx.appcompat:appcompat:1.6.1'\n}\n" > app/build.gradle
         fi
@@ -35,9 +35,8 @@ jobs:
       run: |
         printf "pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\n" > settings.gradle
         printf "include ':app'\n" >> settings.gradle
-        printf "dependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n" >> settings.gradle
+        printf "dependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n" >> settings.gradle
         
-        # Keep root build.gradle completely empty to avoid repository conflicts
         echo "" > build.gradle
 
         mkdir -p gradle/wrapper
