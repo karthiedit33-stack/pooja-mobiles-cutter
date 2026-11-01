@@ -22,18 +22,16 @@ jobs:
     - name: Organize Project Structure
       run: |
         mkdir -p app/src/main/java/com/poojamobiles/cutter app/src/main/res/layout
-        # Move java file if it's in root
         if [ -f "MainActivity.java" ]; then mv MainActivity.java app/src/main/java/com/poojamobiles/cutter/; fi
-        # Move xml files if they are in root
         if [ -f "activity_main.xml" ]; then mv activity_main.xml app/src/main/res/layout/; fi
         if [ -f "AndroidManifest.xml" ]; then mv AndroidManifest.xml app/src/main/; fi
         if [ -f "build.gradle" ] && [ ! -f "app/build.gradle" ]; then cp build.gradle app/; fi
 
-    - name: Create Root Settings and Build Files
+    - name: Create Clean Gradle Settings
       run: |
         echo "include ':app'" > settings.gradle
-        echo "buildscript { repositories { google(); mavenCentral() } dependencies { classpath 'com.android.tools.build:gradle:7.4.2' } }" > build.gradle
-        echo "allprojects { repositories { google(); mavenCentral() } }" >> build.gradle
+        echo "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }" > build.gradle
+        echo "dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS) repositories { google(); mavenCentral() } }" >> build.gradle
 
         mkdir -p gradle/wrapper
         echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
